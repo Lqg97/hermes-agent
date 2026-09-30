@@ -37,6 +37,7 @@ import { usePageHeader } from "@/contexts/usePageHeader";
 import { api } from "@/lib/api";
 import type { ManagedFileEntry, ManagedFilesResponse } from "@/lib/api";
 import { PluginSlot } from "@/plugins";
+import { errorMessage } from "@/lib/api-error";
 
 const DATE_FORMAT = new Intl.DateTimeFormat(undefined, {
   dateStyle: "medium",
@@ -109,7 +110,7 @@ export default function FilesPage() {
         setCurrentPath(result.path);
         setPathInput(result.path);
       } catch (e) {
-        setError(String(e));
+        setError(errorMessage(e));
       } finally {
         setLoading(false);
       }
@@ -183,7 +184,7 @@ export default function FilesPage() {
       showToast("Folder created", "success");
       await load();
     } catch (e) {
-      showToast(`Create failed: ${e}`, "error");
+      showToast(`Create failed: ${errorMessage(e)}`, "error");
     } finally {
       setCreating(false);
     }
@@ -199,7 +200,7 @@ export default function FilesPage() {
       showToast(`${files.length} file${files.length === 1 ? "" : "s"} uploaded`, "success");
       await load();
     } catch (e) {
-      showToast(`Upload failed: ${e}`, "error");
+      showToast(`Upload failed: ${errorMessage(e)}`, "error");
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -242,7 +243,7 @@ export default function FilesPage() {
       const file = await api.readFile(entry.path);
       downloadDataUrl(file.data_url, file.name);
     } catch (e) {
-      showToast(`Download failed: ${e}`, "error");
+      showToast(`Download failed: ${errorMessage(e)}`, "error");
     }
   };
 
@@ -255,7 +256,7 @@ export default function FilesPage() {
       setPendingDelete(null);
       await load();
     } catch (e) {
-      showToast(`Delete failed: ${e}`, "error");
+      showToast(`Delete failed: ${errorMessage(e)}`, "error");
     } finally {
       setDeleting(false);
     }
